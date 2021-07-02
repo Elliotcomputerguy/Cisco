@@ -1,0 +1,11 @@
+! generate crypto keys
+crypto key generate rsa 2048 
+! use only ssh 2
+ip ssh version 2
+show ip ssh
+show ssh
+! use ssh ONLY
+line vty 0 4
+transport input ssh
+
+

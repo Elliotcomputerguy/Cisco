@@ -1,0 +1,6 @@
+banner motd $
+
+your banner
+
+$
+

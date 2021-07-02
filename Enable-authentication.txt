@@ -1,0 +1,5 @@
+! this restricts users from accessing privilidge mode and is encrypted
+! do not use enabled password without enabling service-encryption
+en
+conf t
+enable secret <password>

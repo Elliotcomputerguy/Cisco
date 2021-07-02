@@ -1,0 +1,3 @@
+show mac address-table
+
+show mac address-table dynamic

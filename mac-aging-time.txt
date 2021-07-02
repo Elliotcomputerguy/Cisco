@@ -1,0 +1,2 @@
+show mac address-table aging-time
+mac address-table aging-time <time> 300 default

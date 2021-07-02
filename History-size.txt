@@ -1,0 +1,5 @@
+history size 20
+show history
+
+! only changes for the logged on user account.
+terminal history size <number>

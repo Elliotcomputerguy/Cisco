@@ -1,0 +1,26 @@
+! console
+line con 0
+password <password>
+login
+
+! ssh and telnet
+line vty 0 4
+password <password>
+transport input all
+login
+
+! backup access - not used.. Ever..
+line aux
+shut
+
+username elliot secret <cisco>
+! use local accounts
+
+line con 0
+login local
+
+line vty 0 4
+login local
+transport input all
+
+

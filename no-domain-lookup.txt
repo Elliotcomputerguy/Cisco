@@ -1,0 +1,3 @@
+en
+conf t
+no ip domain-lookup

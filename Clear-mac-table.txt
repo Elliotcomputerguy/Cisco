@@ -1,0 +1,4 @@
+clear mac address-table dynamic
+clear mac address-table dynamic vlan <num>
+clear mac address-table dynamic interface <num>
+clear mac address-table dynamic address <mac>

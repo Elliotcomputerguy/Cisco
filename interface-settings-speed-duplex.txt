@@ -1,0 +1,4 @@
+speed auto / 10 / 100/ 1000
+duplex auto / half / full
+no duplex
+no speed

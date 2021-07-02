@@ -1,0 +1,16 @@
+! administrativily down means that it is admin down
+! down is down
+! status is layer 1 and protocol is layer 2
+en
+conf t
+int fa0/1
+ip add 10.0.0.1 255.255.255.0
+no shut
+
+en
+conf t
+int fa0/1
+ip add dhcp
+no shut
+
+show dhcp lease

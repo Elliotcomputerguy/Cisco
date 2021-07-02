@@ -1,0 +1,3 @@
+show interface status
+show interfaces fa0/1
+sho interfaces description
