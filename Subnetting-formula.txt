@@ -1,0 +1,22 @@
+
+Class A 1   - 126
+Class B 128 - 191
+Class C 192 - 223
+Class D 224 - 239 
+Class E 240 - 255
+
+p = prefix
+s = subnet
+n = network
+h = host
+
+IP = 8.1.4.5 255.255.0.0
+
+step 1 255.255.0.0 = /16, so p = 16
+step 2 8.1.4.5 is in the range of a class A; so N=8
+step 3 S = P - N; so S = P = 16 - N = 8 = 2^8
+step 4 H = 32 - P = 16 = 16 = 2^16
+step 5 2^16 - 2 = 65,534
+step 6 2^8 = 256 subnets
+
+
