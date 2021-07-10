@@ -16,7 +16,7 @@ step 1 255.255.0.0 = /16, so p = 16
 step 2 8.1.4.5 is in the range of a class A; so N=8
 step 3 S = P - N; so S = P = 16 - N = 8 = 2^8
 step 4 H = 32 - P = 16 = 16 = 2^16
-step 5 2^16 - 2 = 65,534
+step 5 2^16 - 2 = 65,534 hosts
 step 6 2^8 = 256 subnets
 
 
