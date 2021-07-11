@@ -1,0 +1,31 @@
+roas
+
+on router
+interface gi0/1.10
+encaps dot1q 10
+ip add 10.0.0.1 255.255.255.0
+no shut
+
+
+interface gi0/1
+no shut
+
+on switch
+
+
+vlan 10
+name data
+int fa0/1
+switchport mode trunk
+switchport trunk allowed vlan 10
+switchport nonegotiate
+no shut
+
+int fa0/2
+switchport mode access
+switchport access vlan 10
+switchport port-security max 3
+switchport port-security vio shut
+spanning-tree portfast
+spanning-tree bpduguard enable
+no shut

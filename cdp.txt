@@ -1,0 +1,5 @@
+show cdp neigbor
+
+show cdp entry <appliance> # good for getting specific information for one appliance
+
+show cdp neighbor detail <to much info, hard to parse through>

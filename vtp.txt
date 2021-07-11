@@ -1,0 +1,9 @@
+vtp
+
+show vtp status
+vtp mode server <default>
+vtp mode transparant <disable>
+vtp mode client <cannot add vlans>
+
+vtp domain <domain>
+vtp password <cisco>

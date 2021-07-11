@@ -1,0 +1,9 @@
+
+
+switchport mode trunk
+switchport nonegotiate <stops dtp packets>
+
+switchport mode trunk dynamic
+
+switchport mode trunk auto
+
