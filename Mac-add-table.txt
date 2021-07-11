@@ -1,3 +1,5 @@
 show mac address-table
 
 show mac address-table dynamic
+
+show mac address-table | inc dc6f
