@@ -49,5 +49,8 @@ switchport-mode-security vio shut
 spanning-tree portfast
 spanning-tree bpduguard enabled
 shut
+do wr
+exit
+
 
  

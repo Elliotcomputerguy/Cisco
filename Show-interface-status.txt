@@ -1,3 +1,4 @@
 show interface status
 show interfaces fa0/1
 sho interfaces description
+show interface fa0/1 switchport
