@@ -1,0 +1,56 @@
+
+en
+conf t
+no ip domain-lookup
+ip domain name elliotcomputerguy.com
+crypto key generate rsa 
+2048
+username elliot secret cisco
+enable secret cisco
+service password-encryption
+banner motd %
+This switch is monitored. No unauthorised access %
+line con 0
+login local
+logging synch
+exec-timeout 0 60
+history size 5
+line vty 0 15
+login local
+logging synch
+exec-timeout 0 60
+history size 5
+transport input ssh
+vlan 50
+name deadvlan
+vlan 10
+name Engineering
+vlan 20
+name HR
+vlan 30
+name Marketing
+vlan 500
+name mgmt
+int ra fa0/1-24
+description *** deadport ***
+switchport mode access
+switchport access vlan 500
+switchport port-security max 3
+switchport port-security vio shut
+spanning-tree portfast
+spanning-tree bpduguard enable
+shut
+int ra gi0/1-2
+description *** deadport ***
+switchport mode access
+switchport access vlan 500
+switchport port-security max 3
+switchport-mode-security vio shut
+spanning-tree portfast
+spanning-tree bpduguard enabled
+shut
+do wr
+exit
+
+
+ 
