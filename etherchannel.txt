@@ -17,7 +17,7 @@ channel-group 1 mode = desirable pagp
 
 
 show etherchannel summary 
-
+show etherchannel channel-group
 show interface status to detect errdisabled 
 
 s = l2 = u = in use p = bundled in a etherchannel
