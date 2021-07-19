@@ -1,0 +1,1 @@
+ip route 0.0.0.0 0.0.0.0 <outgoing interface or interace address> send all unknown traffic to default router. known as a default route

@@ -1,0 +1,14 @@
+
+create a svi on multilayer switch
+
+sdm prefer lanbase-routing to change forwarding logic in the asics to make space for ipv4 routes at the next reload of switch.
+reload so effect takes place. 
+!!!! Enable ip routing with cmd ip routing   !!!!!! 
+
+vlan <number>
+name <vlan name>
+int vlan <number>
+ip add <ip address> <sub mask>
+no shut
+
+show ip route 

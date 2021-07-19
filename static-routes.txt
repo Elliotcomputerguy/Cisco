@@ -1,0 +1,8 @@
+ip route <dest> <outgoing-interface or /32 address of outgoing interface>
+ip route <dest> <outgoing-interface or /32 address of outgoing interface> <ad> for floating
+ip route <dest> <outgoing-interface or /32 address of outgoing interface> permanent if the wan lkinks fail. ignore. not best practice.
+longest prefix wins. 
+
+
+show ip route
+show ip route static
