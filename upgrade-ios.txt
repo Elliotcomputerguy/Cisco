@@ -1,0 +1,3 @@
+upgrade ios or put new image on 
+ping tftp from switch or router to ensure connectivty
+copy tftp: flash: <source filename> <destination filename>
