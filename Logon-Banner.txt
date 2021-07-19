@@ -1,6 +1,3 @@
-banner motd $
-
-your banner
-
-$
-
+banner motd $$
+banner exec &&
+banner login &&

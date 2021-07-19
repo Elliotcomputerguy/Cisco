@@ -1,0 +1,5 @@
+backup image to tftp
+
+confirm you can reach tftp server
+show flash: confirm size of file
+copy flash: tftp: <file> <tftp host>
