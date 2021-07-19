@@ -1,3 +1,8 @@
 upgrade ios or put new image on 
 ping tftp from switch or router to ensure connectivty
 copy tftp: flash: <source filename> <destination filename>
+boot system flash <filename>
+show version 
+copy run start
+reload
+show version
