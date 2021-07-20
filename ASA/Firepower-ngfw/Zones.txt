@@ -1,0 +1,14 @@
+
+Create a MGMT interface for mgmt. 
+
+inside secrity Zone
+
+Outside security Zone
+
+DMZ zone 
+
+Deployment options:
+
+Deploy in a routed mode is nost deployed. All interfaces are l3. 
+Deploy it as a L2 device known as a inline pair. 
+

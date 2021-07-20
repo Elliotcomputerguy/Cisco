@@ -1,0 +1,8 @@
+FMC Firepower management center can be used to manage all the FTD's Firepower threat defence.
+From the Firepower mgmt center you can create policies, licences, monitoring etc. 
+
+We as the admin connect to the FMC and the FMC connects to the FTD 
+FTD run on 2100,4100,9300 appliances. They can also be virtual appliances hosted in cloud platforms
+or vsphere. 
+
+FMC can be physical or virtual.  
