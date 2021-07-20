@@ -1,0 +1,4 @@
+FTD connecets to the cloud to get a load of inteligence from the cloud.
+FTD stands for firepower threat defence. Uses SNORT technology. 
+Has the ability to do ssl decryption which allows the firewall to intercept the 
+traffic and inspect the traffic and rebuild the ssl tunnel to the destination.

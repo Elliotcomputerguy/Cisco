@@ -1,0 +1,29 @@
+show file systems
+
+opaque: these are used for some internal functions. For example, if you use the show running-config command it internally links to the system:running-config file.
+network: this is used to give the filesystem access to external systems like TFTP, FTP or HTTP servers. We can use this to copy files from these external sources to our filesystem.
+disk: this is used for storage devices like our flash memory or USB sticks.
+nvram: this is the internal NVRAM where the startup-config file is saved.
+
+We can see the default folder that we are in with the pwd command:
+copy flash:second-test-config.cfg flash:configs
+
+mkdir flash:configs or just mkdir configs
+cd configs
+dir flash:configs
+delete flash:configs/second-test-config.cfg
+dir flash:configs
+rmdir configs
+
+
+mkdir backup
+copy flash:first-test-config.cfg flash:backup
+dir flash:backup
+archive tar /create flash:backup-configs.tar flash:/backup
+archive tar /table flash:backup-configs.tar <-- view the files in the tar file
+
+mkdir new-configs
+archive tar /xtract flash:backup-configs.tar flash:/new-configs
+dir flash:new-configs
+
+more flash:/first-test-config.cfg <-- view the config file in its txt form 

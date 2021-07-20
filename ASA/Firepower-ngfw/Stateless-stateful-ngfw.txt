@@ -1,0 +1,6 @@
+
+
+stateless Filtering = ACL 
+stateful Filtering = Allows return traffic based on the state table
+NGFW = Application awareness. Application filtering. Uses security inteligence from the cloud
+
