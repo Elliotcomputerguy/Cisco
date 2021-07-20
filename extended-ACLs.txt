@@ -1,0 +1,28 @@
+extended ACLs
+
+can filter on source, destination and protocol
+
+100-199 or 2000-2699
+
+ip access-list extended 100
+
+for vty lines 
+access-class 3 in
+
+If you don’t like numbers you can also use named access-lists by choosing a name, this works for both standard and extended access-lists.
+
+Before we continue let me give you some guidelines when setting up access-lists:
+
+First we create an access-list globally and then we assign it to an interface.
+You can only have a single ACL per direction, so it’s impossible to have 2 inbound access-lists.
+Put the most specific statements at the top of your access-list because if a packet matches a statement the router doesn’t check if it matches any other statements.
+Don’t forget the last statement is deny any. You don’t see it but it’s there
+
+remove a single entry in your policy 
+ip access-list extended 100
+do show access-list 100
+no 20
+
+Extended ACLs should be located as close as possible to the source of the traffic to be filtered. 
+This way, undesirable traffic is denied close to the source network, without crossing the network infrastructure. 
+Standard ACLs should be located as close to the destination as possible
