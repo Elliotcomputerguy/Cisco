@@ -1,0 +1,5 @@
+# wipe start up config from asa
+write erase 
+
+wipe startup and set new ip mgmt interface and enable DHCP and HTTP for ADSM. 
+configure factory-default 
