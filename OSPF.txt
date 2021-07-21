@@ -1,0 +1,40 @@
+
+OSPF is a link state dynamic protocol 
+OSPF PATH COST
+OSPF uses path cost to determine what route to put in its route. It will only use the cost of the egress interfaces when 
+calculating the path cost. 
+
+OSPF uses a LSDB (link state databases) to keep all the lsa (link state advertisements)
+
+OSPF router-id is 32 bits. they are used to identify the router
+if a router-id is not configured it will use the highest loopback ip address
+if the loopback address is not configured it will use the highest ip address
+
+router-id <number>
+
+show cmds
+show ip router ospf 
+show ip ospf int br
+show ip ospf neighbor
+clear ip ospf process to restart ospf algorithm 
+
+
+OSPF DR (designated router) and BDR (backup designated router)
+A DR is used to create adjacencies with all other routers on a broadcast network
+reducing the requirement for every router to create adjancies with all other routers
+A BDR is created in the event should the DR go offline.
+
+DR and BDR are appointed based on the calcuation of the highest priority.
+if all priority were the same the highest router id would be elected.
+
+All other routers that are not a DR or a BDR are called DROTHERS
+
+states:
+init = start to see each other
+2-way = they both see each other and are aware of each other
+exstart/exchange = they both exchange lsa 
+loading = they both load their lsdb lsa 
+full adjacency = become neighbours
+
+communicate on multicast 224.0.0.5
+
