@@ -12,3 +12,7 @@ asdm image <disk0>:/<asdm-522.bin>
 
 save config
 write mem
+
+!remove files 
+delete disk0:/asa712-k8.bin
+delete disk0:/asdm512-k8.bin
