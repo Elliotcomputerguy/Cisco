@@ -1,0 +1,11 @@
+Enabling ASDM
+
+enable http server
+username <username> password <password>
+
+set source address to login to asdm
+http <network> <int>
+Example: http 192.168.0.0 255.255.255.0 MGMT 
+Go to your browser and type in your MGMT interface or <INT> address you have bound the http address too
+
+Example: https://192.168.0.1
