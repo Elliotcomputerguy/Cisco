@@ -5,13 +5,13 @@ domain-name domain.com <-- Required for ssh
 username <user> password <password>
 enable password <password> <-- priv access
 
-! setup ssh
+! enable ssh and access
 
 ssh ver 2
 ssh <addresss> <interface>
 example: ssh 192.168.40.0 255.255.255.0 management
 
-! enable asdm
+! enable asdm and access
 
 http server enable
 http <address> <interface>
@@ -66,8 +66,32 @@ banner motd & message &
 banner login & message &
 
 
+! inside and outside configuration
 
+The lower security level the least it is trusted or the higher the security the zone the more it is trusted. 
 
+lower security zones cannot access higher security zones. But higher security zones can access lower security zones.
 
+DMZ cannot access Inside as DMZ is 50 and inside is 100 
+Outside cannot access Inside as ouside is 0 and inside is 100
+Inside can access both outside and DMZ as the inside security zone is higher than both dmz 50 and outside 0 
 
+Inside is 100
+Outside is 0
+DMZ is 50
 
+so key point ... Highest zones are trusted. Lowest zones are least trusted.
+
+interface gi0/0
+descript ASA-outside
+nameif outside 
+security-level 0
+ip add 56.10.22.7 255.255.255.240 
+
+int g0/1
+descript ASA-inside
+nameif inside
+security-level 100
+ip address 192.168.30.1 255.255.255.0
+
+route outside 0.0.0.0 0.0.0.0 56.10.22.1 <-- Deafult route to reach internet 
