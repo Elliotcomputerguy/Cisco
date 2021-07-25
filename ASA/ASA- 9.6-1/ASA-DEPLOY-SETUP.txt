@@ -1,0 +1,73 @@
+! Setting up your ASA from scratch 
+
+hostname <name>
+domain-name domain.com <-- Required for ssh 
+username <user> password <password>
+enable password <password> <-- priv access
+
+! setup ssh
+
+ssh ver 2
+ssh <addresss> <interface>
+example: ssh 192.168.40.0 255.255.255.0 management
+
+! enable asdm
+
+http server enable
+http <address> <interface>
+example: http 192.168.40.0 255.255.255.0 management
+
+! setup local access to ssh,http,serial
+
+aaa authentication ssh console LOCAL
+aaa authentication http console LOCAL
+aaa authentication serial console LOCAL
+
+! set time UK
+
+clock timezone GMT 0
+clock summer-time BST recurring
+
+! set interfaces
+
+show interface ip brief
+show run int m0/0
+
+interface Management 0/0
+manamgement-only 
+nameif management
+security-level 99
+ip address <ip add>
+no shut
+
+! Allow access for another network to managment interface to manage the ASA
+
+route <interface> <network> <next hop>
+example: route management 192.168.30.0 255.255.255.0 192.168.40.5
+
+! Logging and remote logging
+
+logging enable <-- enable local logging 
+logging buffered debugging <-- set buffer to debigging
+logging trap informational <-- set to informational
+logging host management <syslog server> <--setup remote logging
+
+! ntp 
+
+ntp server <server ip> source <interface>
+example ntp server 192.168.40.5 source management
+
+! disable snmp
+no snmp-server enable
+
+! banner
+
+banner motd & message &
+banner login & message &
+
+
+
+
+
+
+

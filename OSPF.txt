@@ -36,5 +36,12 @@ exstart/exchange = they both exchange lsa
 loading = they both load their lsdb lsa 
 full adjacency = become neighbours
 
-communicate on multicast 224.0.0.5
+all ospf routers listen on multicast 224.0.0.5
+only DR and BDR update on multicast 224.0.0.6
 
+LSA types
+
+1 = individual router (advertises its connections,router id)
+2 = describes broadcast networks and other routers that are connected to the network DR will advertise the type 2
+
+FULL / - means a point to point link 

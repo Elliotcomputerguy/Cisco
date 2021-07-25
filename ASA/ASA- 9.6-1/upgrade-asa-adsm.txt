@@ -1,0 +1,30 @@
+place new ios and asdm on asa
+
+! locate files on disk0 and available space
+dir
+
+! get version 
+show ver
+
+! copy from tftp to 
+copy tftp: disk0: or flash:
+
+! check the md5 hash 
+verify /md5 disk0:/image.bin
+
+! boot from new image
+boot system <disk0>:/<asa722-k8.bin>
+
+!sometimes it can keep the old image. to remove it enter the following cmd
+no boot system <disk0>:/<asa712-k8.bin>
+
+!tell the ASA to use the NEW ASDM image
+ <disk0>:/<asdm-522.bin>
+
+save config
+write mem
+
+! remove files 
+delete disk0:/asa712-k8.bin
+delete disk0:/asdm512-k8.bin
+
