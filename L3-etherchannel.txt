@@ -4,6 +4,7 @@ no switchport
 description *** 1/0-1/1 L3 etherchannel to SW-CORE-02 1/2-1/3 ***
 channel-group 1 mode on
 
+int po1
 ip add 192.168.0.253 255.255.255.252
 description *** 1/0-1/1 L3 etherchannel to SW-CORE-02 1/2-1/3 ***
 
