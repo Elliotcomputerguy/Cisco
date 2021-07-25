@@ -1,0 +1,6 @@
+ASA SHOW COMMANDS
+
+! show interfaces
+show interface ip brief
+
+show route
