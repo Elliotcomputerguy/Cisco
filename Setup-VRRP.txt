@@ -1,0 +1,14 @@
+! setup VRRP
+
+preempt is enabled by default. Highest priroty or interface will become master. 
+Unlike HSRP where it uses the word standby for the secondary, VRRP uses backup and instead of active, VRRP uses master.
+
+sw1
+int (num)
+VRRP 10 <IP> 
+
+sw2
+int (num)
+VRRP 10 <IP>
+
+
