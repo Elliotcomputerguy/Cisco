@@ -1,0 +1,236 @@
+ASA NAT
+
+===================================================================================================================
+dynamic nat
+===================================================================================================================
+dynamic nat is unidirectional and only translates source to destination. It uses
+a pool of public addresses. As soon as the pool of addresses are used it can no longer translate internal
+addresses to public and traffic will be dropped.
+===================================================================================================================
+dynamic pat
+===================================================================================================================
+dynamic pat is unidriectional and will translate internal to outside address and overload and use 
+different ports allowing for traffic to use the same address outgoing but every port will be different.
+===================================================================================================================
+static nat
+===================================================================================================================
+static nat is bidirectional and would be used for a internal webserer. The source and dest port does not change.
+===================================================================================================================
+static pat 
+===================================================================================================================
+static pat is unidirectional, translate source and destination. is used for conditions. If a user accesses a branch office then 
+do a translation. Or if a pc is goig over a certina port then translate. 
+============================================================================================================
+
+Manual and auto 
+
+A manual nat means configuring the NAT globally instead of under the object. 
+Under the object it is called auto or object nat. Manual NAT will always supersuide auto nat.
+Manual will be section 1, auto will be section 2. ASA will first check section 1 and will ignore section 2.
+You can place manual nat in section 3 if you specify which section.
+auto nat is not recommended, will auto go to the bottom of section 2. 
+============================================================================================================
+Ordering is important.
+============================================================================================================
+Topology:
+============================================================================================================
+               195.242.123.0/28                         192.168.0.0/24
+internet <------------------------------> ASA <---------------------------------> LAN {Segment}
+195.242.123.2               195.242.123.1     192.168.0.1            192.168.0.2  
+                                                                    ip route 0.0.0.0 0.0.0.0 192.168.0.1
+                                              route outside 0.0.0.0 0.0.0.0 195.242.123.2 
+Default route to 195.242.123.2 from asa to isp 
+Default route to 192.168.0.1 from router to asa
+============================================================================================================
+We will need to create a NAT configuration in order to allow traffic outbound from inside interface. 
+============================================================================================================
+
+show run nat
+show run object
+show run object-group
+
+===========================================================================================================
+auto dynamic nat configuration:
+
+object network publicRange
+    range 195.242.123.3 195.242.123.4
+
+object network LanNetwork_192_168_0_0
+    network 192.168.0.0 255.255.255.0
+    nat (inside,outside) dynamic publicRange
+
+==========================================================================================================
+show NAT (see that it is in section 2!!)
+
+packet-tracer input inside tcp 192.168.0.1 12345 195.242.123.2 80
+See the additional information.
+
+logging on
+logging buffered 7
+show log
+logging off 
+============================================================================================================
+Important: PRENAT network object always get the NAT statement!!
+============================================================================================================ 
+
+manual dynamic nat:
+
+Do not configure under object.
+nat (inside,outside) <if you specified after-auto it would come after section 2, if not it will go to section> source dynamic
+============================================================================================================ 
+manual dynamic nat configuration:
+
+object network publicrange2
+    range 195.242.123.3 195.242.123.4
+
+object network LanNetwork_192_168_0_0
+    network 192.168.0.0 255.255.255.0
+
+not under the prenat network object as this is manual dynamic nat
+
+nat (inside,outside) source dynamic LanNetwork_192_168_0_0
+================================================================================================================
+show run nat
+show nat
+
+! we see that manual nat takes procedence over auto nat so auto nat statement wont ever be used ! as section 1 wins
+================================================================================================================
+auto dynamic PAT (many to one)
+================================================================================================================
+clear configure nat
+================================================================================================================
+auto dynamic nat configuration:
+================================================================================================================
+object network publicIP
+    host 195.242.123.3
+
+object network LanNetwork_192_168_0_0
+    network 192.168.0.0 255.255.255.0
+    nat (inside,outside) dynamic publicIP
+================================================================================================================
+show nat (see that it is in section 2!)
+clear xlate 
+================================================================================================================
+manual dynamic nat configuration:
+================================================================================================================
+
+object network publicIP2
+    host 195.242.123.4
+
+object network LanNetwork_192_168_0_0
+    network 192.168.0.0 255.255.255.0
+
+!global not under network object
+nat (inside,outside) dynamic publicIP
+
+================================================================================================================
+show nat (see that it is in section 1!)
+clear xlate 
+telnet 195.242.123.4 
+show log
+packet-tracer input inside tcp 192.168.0.1 19109 195.242.123.4 80
+================================================================================================================
+auto Dynamic nat with interface condition if pool of ips are not available use outside interface ip
+================================================================================================================
+
+object network publicRange
+    range 195.242.123.3 195.242.123.4
+
+object network LanNetwork_192_168_0_0
+    network 192.168.0.0 255.255.255.0
+    nat (inside,outside) dynamic publicRange interface
+
+================================================================================================================
+telnet 195.242.123.2
+clear-xlate
+packet-tracer input inside tcp 192.168.0.1 12345 195.242.123.1 80
+
+================================================================================================================
+Manual dynamic nat with pat if dnat ips are exhausted
+================================================================================================================ 
+Create network object group 
+================================================================================================================ 
+
+object network publicIP
+    host 195.242.123.4
+
+object network publicRange
+    range 195.242.123.3 195.242.123.4
+
+object network LanNetwork_192_168_0_0
+    network 192.168.0.0 255.255.255.0
+
+object-group network NATPAT
+    network-object publicRange
+    network-object publicIP
+
+nat(inside,outside) source dynamic LanNetwork_192_168_0_0 NATPAT
+================================================================================================================ 
+clear xlate
+show nat
+telnet 195.242.123.1
+packet-tracer input inside tcp 192.168.0.1 12345 195.242.123.1 80
+show log
+================================================================================================================ 
+auto static nat 
+================================================================================================================ 
+
+object network publicIPWebServer
+    host 195.242.123.4
+
+object network WebServer_192_168_0_5
+    host 192.168.0.5 255.255.255.0
+    nat (inside,inside) static publicIPWebServer
+================================================================================================================ 
+telnet 195.242.123.1
+show log
+================================================================================================================
+In order for outside to come inside you will need a access list due to security zones. Lower security zones cannot
+access higher security zones without a specific policy.
+================================================================================================================
+create access list outside inside
+================================================================================================================
+
+access-list WebOutIn extended outside permit tcp any host 192.168.0.5 eq 80
+access-list WebOutIn extended outside permit icmp any host 192.168.0.5
+access-list WebOutIn extended outside deny ip any any
+
+access-group WebOutIn in interface outside
+================================================================================================================
+manual static nat 
+================================================================================================================
+object network publicIPWebServer
+    host 195.242.123.4
+
+object network WebServer_192_168_0_5
+    host 192.168.0.5 255.255.255.0
+
+nat (inside,inside) source static WebServer_192_168_0_5 publicIPWebServer
+
+access-list WebOutIn extended outside permit tcp any host 192.168.0.5 eq 80
+access-list WebOutIn extended outside permit icmp any host 192.168.0.5
+access-list WebOutIn extended outside deny ip any any
+
+access-group WebOutIn in interface outside
+================================================================================================================
+
+Make sure you always put your specific on top in section 1. So example, single ip web servers will in section 1,
+then a subnet after that. Then in section 3 you can out a catch all.
+
+================================================================================================================
+Below you will see the 1 parameter which means put this rule in order line 1, as it is a manual snat it is section 1
+================================================================================================================
+
+object network publicIPWebServer
+    host 195.242.123.4
+
+object network WebServer_192_168_0_5
+    host 192.168.0.5 255.255.255.0
+
+nat (inside,outside) 1 source static WebServer_192_168_0_5 publicIPWebServer
+
+================================================================================================================
+This would nat anyone to the outside interface. This is a catch all and would sit in section 3.
+
+nat (inside,outside) after-auto source dynamic any interface
+================================================================================================================

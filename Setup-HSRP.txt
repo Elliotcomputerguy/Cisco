@@ -1,0 +1,23 @@
+! Setup HSRP 
+
+sw1 
+int <num>
+Standby 10 IP 192.168.2.254
+standby 10 priority 255 <-- highest priority is the active instance
+standby 10 preempt <-- if the primary active router/switch becomes unactive and fails over to standby. When primary comes back online
+                       it will take over the active role.
+
+sw2
+int <num>
+Standby 10 IP 192.168.2.254
+
+
+show standby 
+show standby brief
+
+Interface   Grp  Pri P State    Active          Standby         Virtual IP
+Vl40        40   255 P Active   local           192.168.8.253   192.168.8.254  
+Vl30        30   255 P Active   local           192.168.4.253   192.168.4.254  
+Vl10        10   255 P Active   local           192.168.2.253   192.168.2.254  
+Vl20        20   255 P Active   local           192.168.3.253   192.168.3.254  
+

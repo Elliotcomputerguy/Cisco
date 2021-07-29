@@ -1,21 +1,24 @@
 ! Setting up your ASA from scratch 
 
-hostname <name>
-domain-name domain.com <-- Required for ssh 
 username <user> password <password>
 enable password <password> <-- priv access
 
 ! enable ssh and access
 
+hostname <name>
+domain-name domain.com <-- Required for ssh
+crypto generate key rsa modulus 1024
 ssh ver 2
+ssh key-exchange group dh-group14-sha1
 ssh <addresss> <interface>
 example: ssh 192.168.40.0 255.255.255.0 management
+ssh timeout 5
 
 ! enable asdm and access
-
 http server enable
 http <address> <interface>
 example: http 192.168.40.0 255.255.255.0 management
+
 
 ! setup local access to ssh,http,serial
 
@@ -28,7 +31,7 @@ aaa authentication serial console LOCAL
 clock timezone GMT 0
 clock summer-time BST recurring
 
-! set interfaces
+! set management interface
 
 show interface ip brief
 show run int m0/0
@@ -40,14 +43,17 @@ security-level 99
 ip address <ip add>
 no shut
 
-! Allow access for another network to managment interface to manage the ASA
+! add route for other networks to manage fw
+route managment 10.0.11.0 255.255.255.0 10.0.2.1
 
-route <interface> <network> <next hop>
-example: route management 192.168.30.0 255.255.255.0 192.168.40.5
+! show routes in running config
+sh run route
+
 
 ! Logging and remote logging
 
 logging enable <-- enable local logging 
+loggin timestamp
 logging buffered debugging <-- set buffer to debigging
 logging trap informational <-- set to informational
 logging host management <syslog server> <--setup remote logging
@@ -58,12 +64,22 @@ ntp server <server ip> source <interface>
 example ntp server 192.168.40.5 source management
 
 ! disable snmp
+
 no snmp-server enable
 
 ! banner
 
 banner motd & message &
 banner login & message &
+banner asdm & message &
+banner exec & message &
+
+! management interface
+descript *** asa mgmt ***
+management-only
+nameif management
+security-level 99
+ip add 10.0.2.10 255.255.255.0 management
 
 
 ! inside and outside configuration
@@ -79,6 +95,7 @@ Inside can access both outside and DMZ as the inside security zone is higher tha
 Inside is 100
 Outside is 0
 DMZ is 50
+Management 99
 
 so key point ... Highest zones are trusted. Lowest zones are least trusted.
 
@@ -95,3 +112,16 @@ security-level 100
 ip address 192.168.30.1 255.255.255.0
 
 route outside 0.0.0.0 0.0.0.0 56.10.22.1 <-- Deafult route to reach internet 
+
+
+! creating access lists
+
+access-list outside_access_in extended permit tcp any host 172.16.0.2 eq http <-- named extened acl allowing traffic to host 172.16.0.2 eq to http and https
+access-lists outside_access_in extended permit tcp any host 172.16.0.2 https
+access-list outside_access_in extended deny ip any any <-- deny anything else
+
+access-group outside_access_in in outside <-- assign to outside zone with parameter in
+
+TRAFFIC FLOW FOR ABOVE RULE
+
+host 172.16.0.2 80,443<------[FW(OUTSIDE_ZONE)FW]<------ ALLOW INBOUND 

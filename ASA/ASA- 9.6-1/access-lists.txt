@@ -1,0 +1,24 @@
+
+
+
+asa access lists
+
+access-lists outside_access_in extended permit tcp any host 172.16.0.2 eq http
+access-lists outside_access_in extended permit tcp any host 172.16.0.2 eq https
+access-lists outside_access_in extended permit deny ip any any
+
+int <num>
+access-group outside_access_in in interface outside
+
+Traffic flow
+
+               policy name    inbound       outisde interface 
+                    |           |             |  
+access-group outside_access_in in interface outside
+                                     |
+                                  what interface
+
+So the above will permit traffic from internet inbound into the firewall and allow access to 172.16.0.2 eq http and https
+
+
+

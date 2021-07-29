@@ -1,0 +1,15 @@
+! Setup Gateway load balancing protocol (GLBP)
+
+
+AVG (active virtual gateway) responds with L2 using round robin so even load is 
+forwaded. 
+
+sw1 
+int <num>
+glbp 10 ip <ip>
+
+sw2
+int <num>
+glbp 10 ip <ip>
+
+show glbp
