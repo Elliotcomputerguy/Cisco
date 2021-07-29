@@ -205,11 +205,32 @@ object network publicIPWebServer
 object network WebServer_192_168_0_5
     host 192.168.0.5 255.255.255.0
 
-nat (inside,inside) source static publicIPWebServer
+nat (inside,inside) source static WebServer_192_168_0_5 publicIPWebServer
 
 access-list WebOutIn extended outside permit tcp any host 192.168.0.5 eq 80
 access-list WebOutIn extended outside permit icmp any host 192.168.0.5
 access-list WebOutIn extended outside deny ip any any
 
 access-group WebOutIn in interface outside
+================================================================================================================
+
+Make sure you always put your specific on top in section 1. So example, single ip web servers will in section 1,
+then a subnet after that. Then in section 3 you can out a catch all.
+
+================================================================================================================
+Below you will see the 1 parameter which means put this rule in order line 1, as it is a manual snat it is section 1
+================================================================================================================
+
+object network publicIPWebServer
+    host 195.242.123.4
+
+object network WebServer_192_168_0_5
+    host 192.168.0.5 255.255.255.0
+
+nat (inside,outside) 1 source static WebServer_192_168_0_5 publicIPWebServer
+
+================================================================================================================
+This would nat anyone to the outside interface. This is a catch all and would sit in section 3.
+
+nat (inside,outside) after-auto source dynamic any interface
 ================================================================================================================
