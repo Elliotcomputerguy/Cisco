@@ -1,6 +1,3 @@
-
-
-
 ASA SNAT
 
 ! Create your object NAT
@@ -15,6 +12,11 @@ host 172.16.0.2
 ! NAT STATEMENT TO TIE PUBLIC OBJECT TO PRIVATE OBJECT
 nat (dmz,outside) static web-outside
 
-! WORKFLOW 
+! Traffic Flow 
 nat (source, destination) <nat type> <public network object>
 
+! show commands
+
+show run object
+show nat 
+show xlate
