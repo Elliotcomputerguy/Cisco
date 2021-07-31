@@ -1,24 +1,86 @@
-
-
-
 asa access lists
 
-access-lists outside_access_in extended permit tcp any host 172.16.0.2 eq http
-access-lists outside_access_in extended permit tcp any host 172.16.0.2 eq https
-access-lists outside_access_in extended permit deny ip any any
+The Cisco ASA firewall uses access-lists that are similar to the ones on IOS routers and switches.
+Without any access-lists, the ASA will allow traffic from a higher security level to a lower security level.
 
-int <num>
-access-group outside_access_in in interface outside
+Access-lists are created globally and then applied with the access-group command. They can be applied in or outbound.
 
-Traffic flow
+When you create an ACL statement for outbound traffic (higher to lower security level) then the source IP address 
+is the real address of the host or network (not the NAT translated one).
 
-               policy name    inbound       outisde interface 
-                    |           |             |  
-access-group outside_access_in in interface outside
-                                     |
-                                  what interface
+When you create an ACL statement for inbound traffic (lower to higher security level) then the destination IP address has to be:
+The translated address for any ASA version before 8.3.
+The real address for ASA 8.3 and newer.
 
-So the above will permit traffic from internet inbound into the firewall and allow access to 172.16.0.2 eq http and https
+The access-list is always checked before NAT translation.
 
+To match IPv4 traffic then you should use “any4”. For IPv6 traffic, use “any6”. Any will catch both 4 and 6
 
+                                              RULE 101
+!!! when permittig or denying always put the interface that they are coming from in the access-group. !!!
+    So if outside wants access to inside. Then it would be ' in interface outside' . Or from dmz then it 
+    would be ' in interface dmz '. Denying access to outside from inside. 'out interface inside'
 
+============================================================================================================
+Topology:
+============================================================================================================
+                    OUTSIDE                                  INSIDE
+
+               195.242.123.0/28                         192.168.0.0/24
+internet <------------------------------> ASA <---------------------------------> LAN {Segment}
+195.242.123.2               195.242.123.1  |   192.168.0.1            192.168.0.2/32 
+                                           | 
+                                           |  DMZ int 172.16.0.1
+                                           |  DMZ 172.16.0.0/24
+                                           |
+                                           |
+                                     172.16.0.2/32
+
+                                                                    ip route 0.0.0.0 0.0.0.0 192.168.0.1
+                                              route outside 0.0.0.0 0.0.0.0 195.242.123.2 
+Default route to 195.242.123.2 from asa to isp 
+Default route to 192.168.0.1 from router to asa
+
+========================================================================================================================
+Access-list breakdown
+access-list name extended <permit/deny> <protocol> [source] + [ source port] to [destination] + [destination port]
+========================================================================================================================
+Scenario [1]
+
+lets deny traffic to destination 195.242.123.2 for tcp http for one source 192.168.0.2 and permit all other traffic.
+========================================================================================================================
+access-list inside_access_out extended deny tcp host 192.168.0.2 host 195.242.123.2 eq 80
+access-list inside_access_out extended permit ip any any
+access-group inside_access_out out interface inside
+========================================================================================================================
+Scenario [2]
+
+lets permit icmp access from dmz source 172.16.0.1 to inside destination 192.168.0.2
+========================================================================================================================
+access-list dmz_access_in extended permit icmp host 172.16.0.1 host 192.168.0.2 echo
+access-list dmz_access_in extended permit icmp host 172.16.0.1 host 192.168.0.2 echo-reply
+access-group dmz_access_in in interface dmz
+========================================================================================================================
+Scenario [3]
+
+permit telnet access to dmz host 172.17.0.2 from any outside address
+========================================================================================================================
+access-list outside_access_in_dmz extended permit tcp any host 172.16.0.2 eq 23
+access-group outside_access_in_dmz in interface outside
+========================================================================================================================
+                                      RULE 102
+          !!! You can only have one access-group per interface in eithe rdirection !!!
+          check you policy does not conflict with another and add to existing policies
+       Have a dmz_access_in and a dmz_access_out and outside_access_in etc and add to them
+
+Example:
+access-list dmz_access_in line 1 extended permit tcp host 192.168.1.3 host 192.168.0.2 eq telnet
+access-list dmz_access_in line 2 extended permit icmp host 192.168.1.3 host 192.168.0.2 echo
+access-list dmz_access_in line 3 extended permit tcp host 192.168.1.3 host 192.168.0.2 echo-reply
+access-group dmz_access_in in interface dmz
+
+access-list outside_access_dmz_in line 1 extended permit icmp any host 192.168.1.3 echo
+access-list outside_access_dmz_in line 2 extended permit icmp any host 192.168.1.3 echo-reply
+access-list outside_access_dmz_in line 3 extended permit icmp any host 192.168.1.2 echo
+access-list outside_access_dmz_in line 4 extended permit icmp any host 192.168.1.2 echo-reply
+access-group outside_access_dmz_in in interface outside
