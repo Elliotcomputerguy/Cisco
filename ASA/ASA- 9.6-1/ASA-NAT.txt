@@ -191,11 +191,13 @@ access higher security zones without a specific policy.
 create access list outside inside
 ================================================================================================================
 
-access-list WebOutIn extended outside permit tcp any host 192.168.0.5 eq 80
-access-list WebOutIn extended outside permit icmp any host 192.168.0.5
-access-list WebOutIn extended outside deny ip any any
+access-list OUTSIDE_INBOUND extended permit icmp any host 192.168.3.3
+access-list OUTSIDE_INBOUND extended permit tcp any host 192.168.3.3 eq 23
+access-list OUTSIDE_INBOUND extended outside deny ip any any
 
-access-group WebOutIn in interface outside
+access-group OUTSIDE_INBOUND in interface outside
+
+
 ================================================================================================================
 manual static nat 
 ================================================================================================================
