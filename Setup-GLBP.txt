@@ -13,3 +13,5 @@ int <num>
 glbp 10 ip <ip>
 
 show glbp
+
+https://www.datacenters.com/news/what-is-a-vcpu-and-how-do-you-calculate-vcpu-to-cpu
