@@ -51,7 +51,7 @@ lets deny traffic to destination 195.242.123.2 for tcp http for one source 192.1
 ========================================================================================================================
 access-list inside_access_out extended deny tcp host 192.168.0.2 host 195.242.123.2 eq 80
 access-list inside_access_out extended permit ip any any
-access-group inside_access_out out interface inside
+access-group inside_access_out in interface inside
 ========================================================================================================================
 Scenario [2]
 
@@ -69,14 +69,16 @@ access-list outside_access_in_dmz extended permit tcp any host 172.16.0.2 eq 23
 access-group outside_access_in_dmz in interface outside
 ========================================================================================================================
                                       RULE 102
-          !!! You can only have one access-group per interface in eithe rdirection !!!
-          check you policy does not conflict with another and add to existing policies
+          !!! You can only have one access-group per interface in either direction !!!
+          check your acl does not conflict with another. Add to existing policies.
        Have a dmz_access_in and a dmz_access_out and outside_access_in etc and add to them
+       Remember below each policy your create there is a deny any any so ensure you have added
+       other ip addresses to be allowed or it will by default block. 
 
 Example:
 access-list dmz_access_in line 1 extended permit tcp host 192.168.1.3 host 192.168.0.2 eq telnet
 access-list dmz_access_in line 2 extended permit icmp host 192.168.1.3 host 192.168.0.2 echo
-access-list dmz_access_in line 3 extended permit tcp host 192.168.1.3 host 192.168.0.2 echo-reply
+access-list dmz_access_in line 3 extended permit tcp host 192.168.1.3 host 192.168.0.2 echo-reply 
 access-group dmz_access_in in interface dmz
 
 access-list outside_access_dmz_in line 1 extended permit icmp any host 192.168.1.3 echo
@@ -84,3 +86,53 @@ access-list outside_access_dmz_in line 2 extended permit icmp any host 192.168.1
 access-list outside_access_dmz_in line 3 extended permit icmp any host 192.168.1.2 echo
 access-list outside_access_dmz_in line 4 extended permit icmp any host 192.168.1.2 echo-reply
 access-group outside_access_dmz_in in interface outside
+
+========================================================================================================================
+Remove an ACL
+========================================================================================================================
+
+clear configure access-list MY_ACL
+
+========================================================================================================================
+Remove a ace
+========================================================================================================================
+
+no access-list outside_access_dmz_in line 4 extended permit icmp any host 192.168.1.2 echo-reply
+
+========================================================================================================================
+object-groups
+========================================================================================================================
+
+An object-group lets you “group” objects, this could be a collection of IP addresses, networks, port numbers, etc. Instead 
+of creating an access-list with many different statements we can refer to an object-group
+
+========================================================================================================================
+object-group options:
+
+configure mode commands/options:
+  icmp-type  Specifies a group of ICMP types, such as echo
+  network    Specifies a group of host or subnet IP addresses
+  protocol   Specifies a group of protocols, such as TCP, etc
+  security   Specifies identity attributes such as security-group
+  service    Specifies a group of TCP/UDP ports/services
+  user       Specifies single user, local or import user group
+
+icmp-type can be used to select all the different ICMP types, for example echo, echo-reply, traceroute, unreachable, etc.
+network is used to select IP addresses and/or network addresses.
+protocol lets you select an entire protocol. For example, TCP, UDP, GRE, ESP, AH, OSPF, EIGRP, and many others.
+security is used for Cisco TrustSec.
+service is used to select TCP and/or UDP port numbers.
+user is to select local user groups for Identity Firewall.
+========================================================================================================================
+Configure object-groups
+========================================================================================================================
+
+ASA1(config)# object-group network WEB_SERVERS
+ASA1(config-network-object-group)# network-object host 192.168.3.1
+ASA1(config-network-object-group)# network-object host 192.168.3.2
+ASA1(config-network-object-group)# network-object host 192.168.3.3
+ASA1(config-network-object-group)# network-object host 192.168.3.4
+ASA1(config-network-object-group)# network-object host 192.168.3.5
+
+access-list HTTP_TO_DMZ permit tcp any object-group WEB_SERVERS eq 80
+========================================================================================================================
