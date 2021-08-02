@@ -1,0 +1,14 @@
+static_nat static_pat
+
+
+! static nat
+
+ip nat inside source static 10.0.0.1 195.242.123.1 
+
+clear ip nat translations *
+show ip nat translations
+
+! static pat
+
+ip nat inside source static tcp 10.0.0.1 80 195.242.123.1 80
+ip nat inside source static tcp 10.0.0.2 25 195.242.123.1 25
