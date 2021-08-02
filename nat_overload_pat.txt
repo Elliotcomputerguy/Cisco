@@ -1,0 +1,46 @@
+
+Quick concepts !
+
+inside local = Private addresses, ports in LAN (i own it)                
+insie global = it is the inside public interface (i borrow it) 
+outside global = it is a public appliance or server you access that has a internet routable address assigned 
+outside local =  it is a public appliance that has a private address that is being natted to allow it to be accessable on the internet
+
+
+   inside local                             inside global           outside global
+         |                                       |                        |
+<private addresses>-----------<router>-----------------------<public server or appliance>
+                                                                          | 
+                                                                     outside local = private ip address of the public address     
+nat overload/PAT configuration
+
+! create a standard access list to allow only the defined source addresses to be natted
+
+ip access-list standard access_list
+    permit 10.0.0.0 0.0.0.255
+    permit 10.1.0.0 0.0.0.255
+
+! identify the interface that the traffic will be egressing
+int <num>
+ip nat outside 
+
+! add the inside to the the networks that will be natted
+vlan 10
+ip nat inside
+vlan 20
+ip nat inside 
+etc
+
+ip nat inside source list access_list interface <num> overload
+
+show ip nat translations
+
+! dynamic nat and pat 
+
+ip access-list standard access_list
+    permit 10.0.0.0 0.0.0.255
+    permit 10.1.0.0 0.0.0.255
+
+ip nat pool pool_name 195.242.123.1 195.242.123.255 prefix-length /24
+ip nat inside source list access_list pool pool_name overload
+
