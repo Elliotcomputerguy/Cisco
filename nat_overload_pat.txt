@@ -34,6 +34,7 @@ etc
 ip nat inside source list access_list interface <num> overload
 
 show ip nat translations
+clear ip nat translations *
 
 ! dynamic nat and pat 
 
