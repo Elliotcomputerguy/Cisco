@@ -1,0 +1,40 @@
+
+
+DHCP configuration
+
+! setting a interface to DHCP
+ip add dhcp
+
+DHCP server on a router or switch
+
+ip dhcp excluded-address 10.0.0.1 10.0.0.2
+ip dhcp pool vlan_10
+    network 10.0.0.0 /24
+    default-gateway 10.0.0.1
+    dns-server 8.8.8.8 4.2.2.2
+
+# create a perm reservation    
+ip dhcp pool
+    hardware-address <mac>
+    host 10.0.0.5 /24
+
+# clear bindings single address
+clear ip dhcp binding <ip>
+
+# clear all bindings
+clear ip dhcp binding
+
+# show bindings
+show ip dhcp binding
+
+# DHCP RELAY
+
+interface <>
+ip helper-address <address>
+
+
+
+
+
+
+
