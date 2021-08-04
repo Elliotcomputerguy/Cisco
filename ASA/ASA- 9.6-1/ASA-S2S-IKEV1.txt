@@ -1,0 +1,252 @@
+
+
+site-2-site ikev1
+
+steps to creating a site-to-site vpn <6 steps>
+
+Phase 1:
+
+step [1] Create a crypto ike policy <lower the number the better the chance of it being sent first. Does not have to match peer>
+
+step [1] setup up authentication type 
+step [1b] encryption type 
+step [1c] hash type
+step [1d] Diffie-Hellman group
+step [1e] life time 
+step [1f] enable phase1 
+config example:
+
+crypto ikev1 policy 10 
+authentication pre-share
+encryption aes 
+hash sha
+group 5
+lifetime 3600
+crypto ikev1 enable outside
+
+step 2 define peer and preshared key
+
+step [2] define the tunnel group peer public address 
+step [2a] define attributes and preshared key
+
+
+config example:
+
+tunnel-group 10.0.0.1 type ipsec-l2l 
+tunnel-group 10.0.0.1 ipsec-attributes
+   ikev1 pre-shared-key <password>
+
+
+Phase 2:
+
+step [3] create transform set and specify esp
+
+config example: 
+
+crypto ipsec ikev1 transform-set s-2-s esp-3des esp-sha-hmac
+
+step [4] create access-list for phase 2 addresses <interesting traffic> 
+
+If asa1 has 192.168.0.0/24 as phase 2 and asa2 has 192.168.1.0/24 phase 2 you would enter on
+asa1 192.168.0.0 255.255.255.0 192.168.1.0 255.255.255.0 and on asa2 192.168.1.0 255.255.255.0 192.168.0.0 255.255.255.0  
+
+config example:
+access-list NAME permit ip 192.168.1.0 255.255.255.0 192.168.0.0 255.255.255.0
+
+step [5] wrap it all up in a container with a crypto map 
+
+step [5a] create crypto map name and number and set peer
+step [5b] set transform-set 
+step [5c] match access policy for interesting traffic
+
+config example:
+crypto map VPN 1 set peer 10.0.0.1
+crypto map vpn 1 set ikev1 transform-set s-2-s
+crypto map vpn 1 match address NAME
+
+step [6] Apply crypto map to interface
+
+crypto map vpn interface outiside
+
+!!! ensure routing is inplace for phase 2 networks !!!
+
+ASA1(config)# route OUTSIDE 192.168.2.0 255.255.255.0 10.10.10.2
+ASA2(config)# route OUTSIDE 192.168.1.0 255.255.255.0 10.10.10.1
+
+Troubleshooting:
+
+ASA1# show crypto isakmp sa
+
+IKEv1 SAs:
+
+   Active SA: 1
+    Rekey SA: 0 (A tunnel will report 1 Active and 1 Rekey SA during rekey)
+Total IKE SA: 1
+
+1   IKE Peer: 10.10.10.2
+    Type    : L2L             Role    : initiator 
+    Rekey   : no              State   : MM_ACTIVE 
+
+There are no IKEv2 SAs
+
+The important thing to look for is the state which is MM_ACTIVE. This means that the IPsec tunnel has been established. 
+Now we can check if our packets and encrypted:
+
+ASA1# show crypto ipsec sa
+interface: OUTSIDE
+    Crypto map tag: MY_CRYPTO_MAP, seq num: 10, local addr: 10.10.10.1
+
+      access-list LAN1_LAN2 extended permit ip 192.168.1.0 255.255.255.0 192.168.2.0 255.255.255.0 
+      local ident (addr/mask/prot/port): (192.168.1.0/255.255.255.0/0/0)
+      remote ident (addr/mask/prot/port): (192.168.2.0/255.255.255.0/0/0)
+      current_peer: 10.10.10.2
+
+
+      #pkts encaps: 1697, #pkts encrypt: 1697, #pkts digest: 1697
+      #pkts decaps: 1696, #pkts decrypt: 1696, #pkts verify: 1696
+      #pkts compressed: 0, #pkts decompressed: 0
+      #pkts not compressed: 1697, #pkts comp failed: 0, #pkts decomp failed: 0
+      #pre-frag successes: 0, #pre-frag failures: 0, #fragments created: 0
+      #PMTUs sent: 0, #PMTUs rcvd: 0, #decapsulated frgs needing reassembly: 0
+      #TFC rcvd: 0, #TFC sent: 0
+      #Valid ICMP Errors rcvd: 0, #Invalid ICMP Errors rcvd: 0
+      #send errors: 0, #recv errors: 0
+
+      local crypto endpt.: 10.10.10.1/0, remote crypto endpt.: 10.10.10.2/0
+      path mtu 1500, ipsec overhead 74(44), media mtu 1500
+      PMTU time remaining (sec): 0, DF policy: copy-df
+      ICMP error validation: disabled, TFC packets: disabled
+      current outbound spi: EECD69E6
+      current inbound spi : F74C0050
+              
+    inbound esp sas:
+      spi: 0xF74C0050 (4148953168)
+         transform: esp-aes-256 esp-sha-hmac no compression 
+         in use settings ={L2L, Tunnel, IKEv1, }
+         slot: 0, conn_id: 4096, crypto-map: MY_CRYPTO_MAP
+         sa timing: remaining key lifetime (kB/sec): (3914834/3423)
+         IV size: 16 bytes
+         replay detection support: Y
+         Anti replay bitmap: 
+          0xFFFFFFFF 0xFFFFFFFF
+    outbound esp sas:
+      spi: 0xEECD69E6 (4006439398)
+         transform: esp-aes-256 esp-sha-hmac no compression 
+         in use settings ={L2L, Tunnel, IKEv1, }
+         slot: 0, conn_id: 4096, crypto-map: MY_CRYPTO_MAP
+         sa timing: remaining key lifetime (kB/sec): (3914834/3423)
+         IV size: 16 bytes
+         replay detection support: Y
+         Anti replay bitmap: 
+          0x00000000 0x00000001
+
+
+#########################################################################################
+Lab
+#########################################################################################
+
+Topology:
+iosv0 = 192.168.1.1 inside 192.168.1.254 asa0 -> outside 10.0.0.1 10.0.0.2 outside <- asa1 192.168.2.254 inside 192.168.2.1 = iosv1
+#########################################################################################
+
+asa0
+
+step [1] crypto policy
+
+crypto ikev1 policy 1
+authentication pre-share
+encryption aes-256
+group 14
+lifetime 3600
+crypto ikev1 enable outside
+
+step [2] tunnel-group preshared key
+
+tunnel-group 10.0.0.2 type ipsec-l2l
+tunnel-group 10.0.0.2 ipsec-attributes
+ikev1 pre-shared-key cisco
+
+step [3] transform set
+
+crypto ipsec ikev1 transform-set site_1_to_site_2 esp-aes-256 esp-sha-hmac
+
+step [4] create access-list
+
+access-list site_1_to_site_2_vpn permit ip 192.168.1.0 255.255.255.0 192.168.2.0 255.255.255.0
+
+step [5] create crypto map
+
+crypto map site_1_to_site_2_map 10 set peer 10.0.0.2
+crypto map site_1_to_site_2_map 10 set ikev1 transform-set site_1_to_site_2
+crypto map site_1_to_site_2_map 10 match address site_1_to_site_2_vpn
+
+step [6] enable crypto map on interface
+
+crypto map site_1_to_site_2_map interface outside
+
+Add route: 
+
+route OUTSIDE 192.168.2.0 255.255.255.0 10.0.0.2
+
+on routers add a default route to asa 
+
+ip route 0.0.0.0 0.0.0.0 192.168.1.254
+#########################################################################################
+
+asa1
+
+step [1] crypto policy
+
+crypto ikev1 policy 1
+authentication pre-share
+encryption aes-256
+group 14
+lifetime 3600
+crypto ikev1 enable outside
+
+step [2] tunnel-group preshared key
+
+tunnel-group 10.0.0.1 type ipsec-l2l
+tunnel-group 10.0.0.1 ipsec-attributes
+ikev1 pre-shared-key cisco
+
+step [3] transform set
+
+crypto ipsec ikev1 transform-set site_2_to_site_1 esp-aes-256 esp-sha-hmac
+
+step [4] create access-list
+
+access-list site_2_to_site_1_vpn permit ip 192.168.2.0 255.255.255.0 192.168.1.0 255.255.255.0
+
+step [5] create crypto map
+
+
+crypto map site_2_to_site_1_map set peer 10.0.0.1
+crypto map site_2_to_site_1_map set ikev1 transform-set site_2_to_site_1
+crypto map site_2_to_site_1_map match address site_2_to_site_1_vpn
+
+
+step [6] enable crypto map on interface
+
+crypto map site_2_to_site_1_map interface outside
+
+Add route: 
+
+route OUTSIDE 192.168.1.0 255.255.255.0 10.0.0.1
+
+on routers add a default route to asa 
+
+ip route 0.0.0.0 0.0.0.0 192.168.1.254
+
+#########################################################################################
+
+Confirm tunnel is active 
+
+show crypto isakmp sa
+
+Confirm packets are being encrypted
+
+show crypto ipsec sa
+
+
+#########################################################################################
