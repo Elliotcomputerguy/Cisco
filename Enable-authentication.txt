@@ -1,0 +1,13 @@
+
+
+! enable secret password is a type 5 hash. More secure than a type 7 but can be brute forced.
+
+! When you enable service password-encryption it will convert all plain text passwords into type 7.
+! Type 7 hashes can be bruteforced in seconds and is not a reccomended encryption level. type 9 is a better encryption but may not
+! be available for your appliance. 
+
+en
+conf t
+enable secret <password> = type 5 
+
+enable 
