@@ -9,7 +9,7 @@ if in errdisable ensure to shut the virtual interface and unshut.....
 Once created. Any changes are required to be carried out on the virtual link. Not the physical interfaces or you will down the 
 etherchannel.
 
-channel-group 1 mode on = static (dont do it) 
+channel-group 1 mode on = static (dont do it) unless layer 3 
 channel-group 1 mode active = lacp
 channel-group 1 mode passive = lacp if both side configued with passive. Etherchannel will not form. Active - active createa a little more chatter but reduces risk. Once formed no chatter.
 channel-group 1 mode = auto pagp if both sides are auto etherchannel will not form. desirable and desirable will create more chatter. 
