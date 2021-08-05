@@ -1,0 +1,10 @@
+
+
+The OpenSSH website has a page dedicated to legacy issues such as this one. It suggests the following approach, on the client:
+
+ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 123.123.123.123
+or more permanently, adding
+
+Host 123.123.123.123
+    KexAlgorithms +diffie-hellman-group1-sha1
+to ~/.ssh/config.

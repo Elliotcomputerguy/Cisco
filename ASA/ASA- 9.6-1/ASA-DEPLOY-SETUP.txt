@@ -112,16 +112,3 @@ security-level 100
 ip address 192.168.30.1 255.255.255.0
 
 route outside 0.0.0.0 0.0.0.0 56.10.22.1 <-- Deafult route to reach internet 
-
-
-! creating access lists
-
-access-list outside_access_in extended permit tcp any host 172.16.0.2 eq http <-- named extened acl allowing traffic to host 172.16.0.2 eq to http and https
-access-lists outside_access_in extended permit tcp any host 172.16.0.2 https
-access-list outside_access_in extended deny ip any any <-- deny anything else
-
-access-group outside_access_in in outside <-- assign to outside zone with parameter in
-
-TRAFFIC FLOW FOR ABOVE RULE
-
-host 172.16.0.2 80,443<------[FW(OUTSIDE_ZONE)FW]<------ ALLOW INBOUND 

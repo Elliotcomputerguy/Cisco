@@ -9,9 +9,12 @@ password <password>
 transport input all
 login
 
-! backup access - not used.. Ever..
+! backup access - used with a modem. If enable password is not set you cannot elevate priv to 15 and 
+  are denied from going any further.
+
 line aux
-shut
+password cisco
+login
 
 username elliot secret <cisco>
 ! use local accounts
@@ -21,6 +24,8 @@ login local
 
 line vty 0 4
 login local
-transport input all
+transport input ssh
 
-
+Add below for global 
+username name secret password
+aaa authentication login default local

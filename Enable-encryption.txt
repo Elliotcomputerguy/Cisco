@@ -1,4 +1,16 @@
-! level 7 encryption is weak 
+! When you enable service password-encryption it will convert all plain text passwords into type 7.
+! Type 7 hashes can be bruteforced in seconds and is not a reccomended encryption level. type 5 is also easily crackable
+! but will take longer. type 9 is a better encryption but may not be available for your appliance. 
+
 en
 conf t
-service password-encryption
+service password-encryption = type 7 
+
+en
+conf t
+enable secret <password> = type 5 
+
+en
+conf t
+enable  algorithm type scrypt secret <password> = type 9
+

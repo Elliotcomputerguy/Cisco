@@ -1,0 +1,7 @@
+
+!locate users conneceted 
+
+show users 
+
+!show priv level
+show privilege
