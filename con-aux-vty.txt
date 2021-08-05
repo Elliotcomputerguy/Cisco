@@ -26,4 +26,6 @@ line vty 0 4
 login local
 transport input ssh
 
-
+Add below for global 
+username name secret password
+aaa authentication login default local
