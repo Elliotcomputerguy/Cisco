@@ -1,0 +1,38 @@
+hit escape on boot and enter rommon
+type confreg 
+
+take note of register num:
+
+Current Configuration Register: 0x00000001
+
+Do you wish to change this configuration? y/n [n]: y
+enable boot to ROMMON prompt? y/n [n]: n
+enable TFTP netboot? y/n [n]: n
+enable Flash boot? y/n [n]: n
+select specific Flash image index? y/n [n]: n
+disable system configuration? y/n [n]: y
+go to ROMMON prompt if netboot fails? y/n [n]: n
+enable passing NVRAM file specs in auto-boot mode? y/n [n]: n
+disable display of BREAK or ESC key prompt during auto-boot? y/n [n]: n
+
+
+Current Configuration Register: 0x00000040
+Configuration Summary:
+  boot ROMMON
+  ignore system configuration
+
+Update Config Register (0x40) in NVRAM...
+
+boot
+copy startup-config running-config
+
+config t
+enable password <password>
+username admin password <password>
+no config-register
+copy run start
+
+
+
+
+
