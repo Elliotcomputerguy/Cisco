@@ -1,0 +1,9 @@
+
+
+
+
+aaa new-model
+aaa authentication login default group radius local
+aaa authorization exec default group radius local
+radius-server host 192.168.79.64 auth-port 1645 acct_port 1646 key ReplaceThisWithKey
+radius-server host 192.168.79.69 auth-port 1645 acct_port 1646 key ReplaceThisWithKey
