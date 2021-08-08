@@ -1,0 +1,63 @@
+ikev2 Topology
+
+iosv0 = 192.168.1.1 inside 192.168.1.254 asa0 -> outside 10.0.0.1 10.0.0.2 outside <- asa1 192.168.2.254 inside 192.168.2.1 = iosv1
+
+IKEv2 Policy Configuration
+Step [1]
+
+:Phase 1:
+
+ASA1 & ASA2
+
+crypto ikev2 policy 10
+encryption aes
+group 15
+prf sha
+lifetime seconds 84600
+crypto ikev2 enable outside
+
+The configuration is similar to the IKEv1 policy, the only new command is prf sha. PRF is the Pseudo Random Function algorithm which is the same as the integrity algorithm.
+
+:Phase 2:
+
+Step [2]
+
+ASA1 & ASA2
+crypto ipsec ikev2 ipsec-proposal _PROPOSAL_
+protocol esp encryption aes
+protocol esp integrity sha-1
+
+We will use ESP, AES as the encryption algorithm and SHA for integrity.
+
+Step [3] configure pre-share key and tunnel-group  
+
+ASA1(config)# tunnel-group 10.0.0.2 type ipsec-l2l 
+ASA1(config)# tunnel-group 10.0.0.2 ipsec-attributes 
+ASA1(config-tunnel-ipsec)# ikev2 local-authentication pre-shared-key cisco
+ASA1(config-tunnel-ipsec)# ikev2 remote-authentication pre-shared-key cisco
+
+ASA2(config)# tunnel-group 10.0.0.1 type ipsec-l2l 
+ASA2(config)# tunnel-group 10.0.0.1 ipsec-attributes 
+ASA2(config-tunnel-ipsec)# ikev2 local-authentication pre-shared-key cisco
+ASA2(config-tunnel-ipsec)# ikev2 remote-authentication pre-shared-key cisco
+
+Step [4] create ACL for cryto map
+
+ASA1(config)# access-list LAN1_LAN2 extended permit ip host 192.168.1.1 host 192.168.2.1
+
+ASA2(config)# access-list LAN2_LAN1 extended permit ip host 192.168.2.1 host 192.168.1.1
+
+Step [5] Crypto map
+
+ASA1(config)# crypto map MAP1 1 match address LAN1_LAN2
+ASA1(config)# crypto map MAP1 1 set peer 10.0.0.2   
+ASA1(config)# crypto map MAP1 1 set ikev2 ipsec-proposal _PROPOSAL_
+
+ASA2(config)# crypto map MAP1 1 match address LAN2_LAN1
+ASA2(config)# crypto map MAP1 1 set peer 10.0.0.1   
+ASA2(config)# crypto map MAP1 1 set ikev2 ipsec-proposal _PROPOSAL_
+
+Step [6] enable crypto map on interface
+
+ASA1(config)# crypto map MAP1 interface outside
+ASA2(config)# crypto map MAP1 interface outside
