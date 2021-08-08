@@ -88,7 +88,7 @@ object network LanNetwork_192_168_0_0
 
 not under the prenat network object as this is manual dynamic nat
 
-nat (inside,outside) source dynamic LanNetwork_192_168_0_0
+nat (inside,outside) source dynamic LanNetwork_192_168_0_0 publicrange2
 ================================================================================================================
 show run nat
 show nat
@@ -193,7 +193,6 @@ create access list outside inside
 
 access-list OUTSIDE_INBOUND extended permit icmp any host 192.168.3.3
 access-list OUTSIDE_INBOUND extended permit tcp any host 192.168.3.3 eq 23
-access-list OUTSIDE_INBOUND extended outside deny ip any any
 
 access-group OUTSIDE_INBOUND in interface outside
 
@@ -211,7 +210,6 @@ nat (inside,inside) source static WebServer_192_168_0_5 publicIPWebServer
 
 access-list WebOutIn extended outside permit tcp any host 192.168.0.5 eq 80
 access-list WebOutIn extended outside permit icmp any host 192.168.0.5
-access-list WebOutIn extended outside deny ip any any
 
 access-group WebOutIn in interface outside
 ================================================================================================================
