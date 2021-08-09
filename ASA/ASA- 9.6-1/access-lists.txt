@@ -94,7 +94,7 @@ Remove an ACL
 clear configure access-list MY_ACL
 
 ========================================================================================================================
-Remove a ace
+Remove an ACE
 ========================================================================================================================
 
 no access-list outside_access_dmz_in line 4 extended permit icmp any host 192.168.1.2 echo-reply

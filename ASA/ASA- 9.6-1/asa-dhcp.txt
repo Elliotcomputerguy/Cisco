@@ -1,0 +1,101 @@
+
+
+Enable the DHCPv4 Server
+To enable the DHCP server on an ASA interface, perform the following steps:
+
+Procedure
+Step 1	
+Create a DHCP address pool for an interface. The ASA assigns a client one of the addresses from this pool to use for a given period of time. These addresses are the local, untranslated addresses for the directly connected network.
+
+dhcpd address ip_address_start-ip_address_end if_name
+
+Example:
+
+ciscoasa(config)# dhcpd address 10.0.1.101-10.0.1.110 inside
+
+The address pool must be on the same subnet as the ASA interface. In transparent mode, specify a bridge group member interface.
+
+Step 2	
+(Optional) (Routed mode) Automatically configure DNS, WINS, and domain name values obtained from an interface running a DHCP or PPPoE client, or from a VPN server.
+
+dhcpd auto_config client_if_name [[ vpnclient-wins-override] interface if_name]
+
+Example:
+
+ciscoasa(config)# dhcpd auto_config outside interface inside
+
+If you specify DNS, WINS, or domain name parameters using the following commands, then they overwrite the parameters obtained by automatic configuration.
+
+Step 3	
+(Optional) Reserve a DHCP address for a client. The ASA assigns a specific address from the configured address pool to a DHCP client based on the client's MAC address.
+
+dhcpd reserve-address ip_address mac_address if_name
+
+Example:
+
+ciscoasa(config)# dhcpd reserve-address 10.0.1.109 030c.f142.4cde inside
+
+The reserved address must come from the configured address pool, and the address pool must be on the same subnet as the ASA interface. In transparent mode, specify a bridge group member interface.
+
+Step 4	
+(Optional) Specify the IP address(es) of the DNS server(s).
+
+dhcpd dns dns1 [dns2]
+
+Example:
+
+ciscoasa(config)# dhcpd dns 209.165.201.2 209.165.202.129
+
+Step 5	
+(Optional) Specify the IP address(es) of the WINS server(s). You may specify up to two WINS servers.
+
+dhcpd wins wins1 [wins2]
+
+Example:
+
+ciscoasa(config)# dhcpd wins 209.165.201.5
+
+Step 6	
+(Optional) Change the lease length to be granted to the client. The lease length equals the amount of time in seconds that the client can use its allocated IP address before the lease expires. Enter a value from 0 to 1,048,575. The default value is 3600 seconds.
+
+dhcpd lease lease_length
+
+Example:
+
+ciscoasa(config)# dhcpd lease 3000
+
+Step 7	
+(Optional) Configure the domain name.
+
+dhcpd domain domain_name
+
+Example:
+
+ciscoasa(config)# dhcpd domain example.com
+
+Step 8	
+(Optional) Configure the DHCP ping timeout value for ICMP packets. To avoid address conflicts, the ASA sends two ICMP ping packets to an address before assigning that address to a DHCP client. The default is 50 milliseconds.
+
+dhcpd ping timeout milliseconds
+
+Example:
+
+ciscoasa(config)# dhcpd ping timeout 20
+
+Step 9	
+Define a default gateway that is sent to the DHCP clients. For routed mode, if you do not use the dhcpd option 3 ip command, then the ASA sends the DHCP server-enabled interface IP address as the default gateway. For transparent mode, you must set dhcpd option 3 ip if you want to set a default gateway; the ASA itself cannot act as the default gateway.
+
+dhcpd option 3 ip gateway_ip
+
+Example:
+
+ciscoasa(config)# dhcpd option 3 ip 10.10.1.1
+
+Step 10	
+Enable the DHCP daemon within the ASA to listen for DHCP client requests on the enabled interface.
+
+dhcpd enable interface_name
+
+Example:
+
+ciscoasa(config)# dhcpd enable inside
