@@ -1,0 +1,9 @@
+DHCP Snooping
+
+DHCP snooping stops untrusted dhcp servers on your network.
+You enable it globally and then allow it on the port.
+
+ip dhcp Snooping
+
+int gi<num>
+ip dhcp snooping trust

@@ -2,7 +2,7 @@
 Quick concepts !
 
 inside local = Private addresses, ports in LAN (i own it)                
-insie global = it is the inside public interface (i borrow it) 
+inside global = it is the inside public interface (i borrow it) 
 outside global = it is a public appliance or server you access that has a internet routable address assigned 
 outside local =  it is a public appliance that has a private address that is being natted to allow it to be accessable on the internet
 

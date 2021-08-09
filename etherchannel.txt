@@ -3,7 +3,7 @@ ensure that the configuration on the interfaces are exactly the same !!! or it w
 best to default interfaces. default int ra <>
 put both interfaces into a channel-group and choose pagp or lagp and then add config on virtual interface 
 
-8 links max in a bundled
+8 links max in a bundled but can take 16 with 8 as backup.
 
 if in errdisable ensure to shut the virtual interface and unshut.....
 Once created. Any changes are required to be carried out on the virtual link. Not the physical interfaces or you will down the 
