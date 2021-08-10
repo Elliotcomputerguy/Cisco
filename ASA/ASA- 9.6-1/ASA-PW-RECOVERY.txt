@@ -32,7 +32,7 @@ username admin password <password>
 no config-register
 copy run start
 
-
+https://www.petenetlive.com/KB/Article/0000572
 
 
 
