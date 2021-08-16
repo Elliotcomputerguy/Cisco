@@ -17,7 +17,8 @@ show ip router ospf
 show ip ospf int br
 show ip ospf neighbor
 clear ip ospf process to restart ospf algorithm 
-
+show ip protocols
+show ip ospf interface <>
 
 OSPF DR (designated router) and BDR (backup designated router)
 A DR is used to create adjacencies with all other routers on a broadcast network
@@ -41,7 +42,82 @@ only DR and BDR update on multicast 224.0.0.6
 
 LSA types
 
-1 = individual router (advertises its connections,router id)
-2 = describes broadcast networks and other routers that are connected to the network DR will advertise the type 2
+1 = (router) individual router (advertises its connections,router id)
+2 = (network) describes broadcast networks and other routers that are connected to the network DR will advertise the type 2
+3 = (summary) networks not local to the area advertised by the ABR area border router
+
+!Neighbor states:
+FULL / - means a point to point link 
+FULL/DR - local router has a neighbourship with DR 
+FULL/BDR - local router has neighbourship with BDR
+FULL/DROTHER - local router is ether a DR or BDR and the remote router is not a DR or BDR 
+2WAY/DROTHER - local router is not DR or BDR and the reomte and local router do not form a neighbourship
+
+!Passive interfaces:
+
+Do not advertise OSPF advertisements on this interface. 
+
+passive-interface <interface>
+
+Globally enable passive-interface on every interface and enter the no passive-interface on the interface you wish to advertise ospf advertisements from.
+
+passive-interface default 
+
+
+!Default routers:
+
+Advertise default routes via ospf
+
+default-information originate
+
+!OSPF costs:
+
+interface 
+ip ospf cost <number>
+
+set bandwidth globally
+
+auto-cost reference-bandwidth <speed>
+
+Serial = 64 ospf cost
+Ethernet = 10
+Fast ethernet = 1
+Gigabit = 1
+10 gig = 1
+100 gig = 1
+
+!Router dr and bdr priority:
+
+ospf elects a dr and bdr based on their router interface priority from 0 255 and then highest router id 
+
+interface
+ip ospf priority 99
+
+point to point 
+does not support broadcast as it is using ppp or hdlc and will not use a dr or a bdr. 
+
+To configure you will need to issue 
+int <num>
+ip ospf network point-to-point
 
 FULL / - means a point to point link 
+
+!!! Important neighbor requirements !!!!
+Hello and dead time intervals, MTU must match = show ip ospf interface
+they must be in the same area = show ip ospf interface br
+RIDS must be unique = show ip ospf
+They must pass any neighbor authentication = show ip ospf interface
+OSPF process must not be shutdown = show ip ospf, show ip ospf interface
+
+!Configure ospf:
+
+router ospf 1
+router-id 1.1.1.1
+network 10.0.0.0 0.0.0.255 area 0 or on interface type ip ospf area 0 and will only advertise the /32 rather than the entire subnet.
+passive-interface default 
+interface <num>
+no passive-interface
+
+!shutdown ospf:
+router ospf 1
+shutdown

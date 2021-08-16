@@ -3,12 +3,75 @@ static_nat static_pat
 
 ! static nat
 
+interface
+ip nat inside
+
+interface
+ip nat outside
+
 ip nat inside source static 10.0.0.1 195.242.123.1 
 
-clear ip nat translations *
-show ip nat translations
 
 ! static pat
 
+interface
+ip nat inside
+
+interface
+ip nat outside
+
 ip nat inside source static tcp 10.0.0.1 80 195.242.123.1 80
 ip nat inside source static tcp 10.0.0.2 25 195.242.123.1 25
+
+! pat
+
+interface
+ip nat inside
+
+interface
+ip nat outside
+
+access-list standard NAT-SOURCES
+permit local-address
+deny any
+
+ip nat inside source list NAT-SOURCES interface g0/0 overload 
+
+
+! dnat
+
+access-list standard NAT-SOURCES
+permit local-address
+deny any
+
+interface
+ip nat inside
+
+interface
+ip nat outside
+
+ip nat pool PUBLIC-IPS 205.205.205.201 - 205.205.205.203 prefix-length 29
+
+ip nat inside source list NAT-SOURCES pool PUBLIC-IPS 
+
+
+! dnat - pat
+
+access-list standard NAT-SOURCES
+permit local-address
+deny any
+
+interface
+ip nat inside
+
+interface
+ip nat outside
+
+ip nat pool PUBLIC-IPS 205.205.205.201 - 205.205.205.203 prefix-length 29
+
+ip nat inside source list NAT-SOURCES pool PUBLIC-IPS overload
+
+! show cmds
+
+clear ip nat translations *
+show ip nat translations
