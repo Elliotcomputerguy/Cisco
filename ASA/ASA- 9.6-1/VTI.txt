@@ -68,7 +68,7 @@ crypto ikev2 policy 5
  prf sha512
  lifetime seconds 86400
 
-crypto ikev2 enable DEV_AIX_BK_BOUNCER_LOW
+crypto ikev2 enable another
 
 crypto ipsec ikev2 ipsec-proposal TS_WWW-CAPA-CAPC
  protocol esp encryption aes-256 aes-192
@@ -104,3 +104,6 @@ nat (inside,outside) source dynamic any interface
 VERIFY
 =======================
 show crypto ikev2 sa 
+
+
+https://tayam-infra.net/asa-route-based-ipsec-vpn-with-ikev2/
