@@ -3,13 +3,13 @@ Topology:
 
 
 
-<-----------------------------------------------------CAP-C ASA FP1010--------------------------------->                    <-----------CAP-A ASA 5515X-------------------> 
+<----------------------------------------------------- ASA FP1010--------------------------------->                    <----------- ASA 5515X-------------------> 
 
           Host1 
       172.16.0.2/29
       GW 172.16.0.1
 
-net = 172.16.0.0/29 -------------------> ASA INSIDE = 172.16.0.1 <-----------> ASA OUTSIDE = 10.21.201.1 <-------------------> ASA DEV_AIX_BK_BOUNCER_LOW = 10.21.201.254 
+net = 172.16.0.0/29 -------------------> ASA INSIDE = 172.16.0.1 <-----------> ASA OUTSIDE = 10.21.201.1 <-------------------> ASA OUTSIDE = 10.21.201.254 
 
                                                                                                       Tunnel2 subnet = 172.16.0.8/30
 
@@ -18,7 +18,7 @@ net = 172.16.0.0/29 -------------------> ASA INSIDE = 172.16.0.1 <-----------> A
 ==============================================================================================================================================================================================
 
 =======================
-CAP-C ASA FP1010
+ ASA FP1010
 =======================
 crypto ikev2 policy 5
  encryption aes-256
@@ -48,7 +48,7 @@ ikev2 remote-authentication pre-shared-key Cisco1234
 ikev2 local-authentication pre-shared-key Cisco1234
 
 interface Tunnel0
- nameif CAPC-CAPA-WWW
+ nameif INT_TUN2
  ip address 172.16.0.9 255.255.255.252
  tunnel source interface OUTSIDE
  tunnel destination 10.21.201.254
@@ -59,7 +59,7 @@ route CAPC-CAPA-WWW 0.0.0.0 0.0.0.0 172.16.0.10
 
 
 =======================
-CAP-A ASA 5515X
+ASA 5515X
 =======================
 crypto ikev2 policy 5
  encryption aes-256
@@ -90,7 +90,7 @@ ikev2 remote-authentication pre-shared-key Cisco1234
 ikev2 local-authentication pre-shared-key Cisco1234
 
 interface Tunnel0
- nameif CAPA-CAPC
+ nameif INT-TUN2
  ip address 172.16.0.10 255.255.255.252
  tunnel source interface OUTSIDE
  tunnel destination 10.21.201.1
