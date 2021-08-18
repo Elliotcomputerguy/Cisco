@@ -14,3 +14,7 @@ errdisable recovery cause psecure-violation = global cmd to enable the recovery 
 
 errdisable recovery interval 'seconds' = global cmd to set time to wait before auto recovey of shutdown ports
 
+When a port is useing port security, the switch no longer considers that the mac is dynamic and can only be located with the static cmd 
+
+show mac address-table static or show mac address-table secure. Securw will just show secure ports where static will show 
+any static mac on port.  
