@@ -1,5 +1,25 @@
-show cdp neigbor
+cdp
+
+CDP is enabled by default. You can disable via interface or globally.
+
+interface <num>
+no cdp enable 
+
+global turn off or on cdp 
+
+no cdp run
+cdp run
 
 show cdp entry <appliance> # good for getting specific information for one appliance
 
-show cdp neighbor detail <to much info, hard to parse through>
+show cdp neighbors detail <to much info, hard to parse through>
+
+Shows device identifier
+address list
+port identifier
+capabilities list
+platform
+
+
+show cdp traffic highlights number of advertisements
+
