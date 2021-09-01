@@ -1,0 +1,21 @@
+An snmp manger is a network manager application running on a pc or server. The server is called a NMS (network management server)
+
+The smtp agent is software running on a device with knowedge of all the variables on that device that describes the deviceconfiguration, status, counters etc .
+
+Ther SNMP manager uses SNMP protocols to communicate with each SNP agent. 
+
+Each agent keeps a db of variables that make up the parameters, status and counters for operations of the device. 
+Management information base (MIB) are variables that can be pulled from a device. They reflect some feature or functino setting
+on a device. The MIB is pulled or sent to the NMS by the snmp agent on that device. 
+The MIB defines each device variable as a Object ID (OID) and organises into a heirarchy.   
+
+snmp uses get request and get response
+
+snmp agents send a trap or inform snmp message to the NMS to list teh state of a certain MIB variable when it reaches a certain state
+
+If a interface went down on a router and a trap is set, the trap would inform the snmp NMS.
+
+inform messages hae the exact same purpose as trap but differ in protocol mechanisms. Inform are like trap messages but with 
+reliability added in snmp v2. 
+
+all snmp is clear text apart from v3 v3 has message integrity, checks for message replay, authentication and encryption. 

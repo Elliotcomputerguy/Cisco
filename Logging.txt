@@ -1,0 +1,40 @@
+
+
+logging console is on by default and logs all output to the console session. 
+To get ssh and telnet sessions to view logs you have to enable logging monitor and then in the session enter the terminal monitor EXEC command. 
+
+Storing logs. Cisco stores logs in ram with the logging buffered global command. To view logs enter show logging.
+
+To send to a SYSLOG server enter the following
+
+logging host [address] 
+
+to diable timestamps and enable sequence numbers enter the following
+
+no service timestamp
+service sequence-numbers
+
+=====================================================================
+Emergency        0          Systen unusable                Severe  
+Alert            1          Immediate action required
+Critical         2          Critical event 
+Error            3          Error event                    Impactful
+Warning          4          Warning event
+Notification     5          Normal, more important         Normal
+Informational    6          Normal, less important         
+Debug            7          Requested by user debug        Debug
+=====================================================================
+
+logging console level-name | level-number
+logging monitor level-name | level-number
+logging buffered level-name | level-number
+logging host address | hostname
+logging trap level-name | level-number 
+
+Example:
+
+logging console 7
+logging monitor debug
+logging buffered 4
+logging host <address>
+logging trap Warning

@@ -4,8 +4,17 @@ switchport port-security violation
 switchport port-security mac-address sticky
 switchport port-security mac-address aaaa.bbbb.cccc
 show port-security interface fa0/1
-
+show port-security
 
 Protect: Ethernet frames from MAC addresses that are not allowed will be dropped but you won’t receive any logging information.
 Restrict: Ethernet frames from MAC addresses that are not allowed will be dropped but you will see logging information and a SNMP trap is sent.
 Shutdown: Ethernet frames from MAC addresses that are not allowed will cause the interface to go to err-disable state. You will see logging information and a SNMP trap is sent. For recovery you have two options:
+
+errdisable recovery cause psecure-violation = global cmd to enable the recovery of security port shutdowns
+
+errdisable recovery interval 'seconds' = global cmd to set time to wait before auto recovey of shutdown ports
+
+When a port is useing port security, the switch no longer considers that the mac is dynamic and can only be located with the static cmd 
+
+show mac address-table static or show mac address-table secure. Securw will just show secure ports where static will show 
+any static mac on port.  

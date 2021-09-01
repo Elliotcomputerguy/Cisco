@@ -1,0 +1,11 @@
+Dynamic Arp Inspection
+
+relies on dhcp binding for dhcp snooping or uses DAI ACLs
+
+Configuration:
+
+ip arp inspection vlan 11
+
+interface gi1/0/1 
+ip arp inspection trust
+

@@ -1,9 +1,56 @@
 DHCP Snooping
 
-DHCP snooping stops untrusted dhcp servers on your network.
-You enable it globally and then allow it on the port.
+DHCP snooping stops untrusted dhcp servers on your network. DHCP snooping is L2. 
+DHCP snooping requires seceral configurations. You need to use global commands to enable snooping and another to list the vlans 
+on which to use the DHCP snooping. Both must be included for for DHCP snooping to work.
 
+You will often need to configure some ports as trusted ports as well. 
+topology:
+
+Trusted                      Untrusted
+-----------------------------------------------
+                    |
+            G1/0/2  |  G1/0/3    
+@------@-----------[=]-------[]client 1 - vlan 10
+R1     R2           |_______________________[] clinet 2 - vlan 11
+|                     G1/0/4
+|
+[]
+DHCP Server
+
+
+The above topology has two vlans 10,11. In order to turn on dhcp snooping we need to enable it globally and 
+specify what vlans we want it on for. We also need to add a trusted port on switch G1/0/2
+
+global cmds:
 ip dhcp Snooping
+ip dhcp snooping vlan 10,11
+no ip dhcp snooping information option
 
-int gi<num>
+int gi1/0/3
 ip dhcp snooping trust
+
+! confirm that it is enabled and on what vlans, dhcp snoop rate limiting
+show ip dhcp snooping
+
+Whats does this mean ?
+no ip dhcp snooping information option
+
+I rfc3046 DHCP relays add additional fileds to dhcp requests. Defined as option 82. DHCP snooping uses default settings
+that work well if the switch is L3, meaning the switch should insert the option 82 into the field of a hdcp message. When the 
+switch does not act as a dhcp relay agent, the default setting stops DHCP from working for end users. The switch
+sets the field in DHCP messages as if it were a DHCP relay agent, but the changes to those messages cause most DHCP servers and most
+dhcp relay agents to ignore recieved DHCP messgages. 
+
+In order to make dhcp snooping work on a switch that is not also a dhcp relay agent, disable option 82 with the 
+no ip dhcp snooping information option 
+
+
+
+To stop attackers attacking dhcp snooping to limit the number of incoming dhcp messages. 
+
+Global cmds: 
+errdisable recovery cause dhcp-rate-limit = auto recover from dhcp errdiable events
+
+errdisable reovery interval 30 = wait 30 seonds before auto recover the port
+

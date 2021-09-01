@@ -1,0 +1,57 @@
+To configure NTP you need to set the clock timezone and set the date and time before you synch with an external or ntp server. 
+
+clock timezone BST 0 0
+clock summer-time BST recurring last Sun Mar 1:00 last Sun Oct 2:00 
+clock set 18:15:00 23 october 2021
+
+service timestamps debug datetime msec localtime
+service timestamps log datetime msec localtime
+
+sh clock detail
+
+
+Basic NTP configuration:
+
+ntp master {stratum level}: NTP server mode - the device acts only as a NTP server and not a client. 
+
+ntp server {address | fqdn}: NTP client/server mode. the device acts as both client and server, first it is a client to synchronize,
+                             once synchronized it will become a server and supply to other clients.
+
+
+Example: 
+
+            R1       172.16.2.2  R2         172.16.3.3  R3
+    -------{@@}-----------------{@@}-------------------{@@}
+cmd:     ntp server          ntp server             ntp master 
+         172.16.2.2          172.16.3.3
+
+         Stratum 4            Stratum 3             Stratum 2 
+
+R3 acts as a NTP server only 
+R2 & R1 acts as a client/server  
+
+show ntp status 
+
+show ntp associations. 
+
+
+ntp master uses its own internal device hardware to determine the time. The lower the stratum the more it is trusted. NTP client adds 1 to the 
+stratum level it learns from its ntp server. So that the stratum level increases the more hops away from the original clock source. 
+
+Routers and switches use a default stratum level of 8 as their internal reference hardware. NTP considered 15 to be te highest useful
+stratum level. Anything past 15 is considered unusable. 
+
+Redundant NTP configuration:
+
+1: establish an association with a internet time source with the ntp server cmd
+2: establish an internal clock using the ntp master {stratum} command
+3: set the stratum level of the internal clock to a higher stratum level than the internet based ntp servers
+4: synch with the best (lowest) known time source. being the internet based ntp server
+
+The ntp server has a stratum level of 1, the internal device clock has a stratum of 7 so all clients will use the ntp server. 
+
+ntp server ntp.my-inbox.co.uk
+ntp master 7
+
+
+Configure a loopback address on your master NTP incase any interfaces go down. 

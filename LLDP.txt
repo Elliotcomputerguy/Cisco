@@ -1,0 +1,14 @@
+lldp same as cdp but is not propiertry, some small differences. 
+
+cmds:
+global cmd
+[no] lldp run 
+per interface
+lldp transmit will transmit lldp messages, no lldp transmit will stop it from transmitting.
+lldp receive will receive lldp messages
+
+show lldp
+
+show lldp traffic
+
+
