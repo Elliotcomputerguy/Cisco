@@ -12,5 +12,5 @@ enable secret <password> = type 5
 
 en
 conf t
-enable  algorithm type scrypt secret <password> = type 9
+enable algorithm type scrypt secret <password> = type 9
 
