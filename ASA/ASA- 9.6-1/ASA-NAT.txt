@@ -121,7 +121,7 @@ object network LanNetwork_192_168_0_0
     network 192.168.0.0 255.255.255.0
 
 !global not under network object
-nat (inside,outside) dynamic publicIP
+nat (inside,outside) dynamic LanNetwork_192_168_0_0 publicIP
 
 ================================================================================================================
 show nat (see that it is in section 1!)
