@@ -1,0 +1,59 @@
+Passive active failover
+
+Topology:
+
+vlan 1337 = 100.100.100.0/24
+vlan 101 = 192.168.1.0/24              g0/0             g0/1  
+                                     outside           inside
+100.100.100.254                  100.100.100.1       192.168.1.1                             192.168.1.4
+[isp]--------------[wan_bo_sw1]---------------[asa1]--------------[lan_inside_sw1]-----------[host]
+                        |                     .1 |  g0/2                |  
+                        |     192.168.99.0/30    |                      |
+                        |        stateful        |                      |
+                        |        failover     .2 |  g0/2                |  
+                        |_____________________[asa2]____________________|         
+                                    g0/0                 g0/1
+                                  outside               inside
+                                 100.100.100.2         192.168.1.2
+primary asa
+
+int g0/2
+no shut
+failover lan unit primary
+failover lan interface FAILOVER gigabitethernet0/2
+failover link FAILOVER gigabitethernet0/2
+failover interface ip FAILOVER 192.168.99.1 255.255.255.0 standby 192.168.99.2
+failover
+
+int g0/0
+nameif outside
+ip add 100.100.100.1 255.255.255.0 standby 100.100.100.2
+no shut
+int g0/1
+ip add 192.168.1.1 255.255.255.0 standby 192.168.1.2
+no shut
+monitor-interface inside
+monitor-interface outside
+
+Secondary asa
+
+int g0/2
+no shut
+failover lan unit secondary
+failover lan interface FAILOVER gigabitethernet0/2
+failover link FAILOVER gigabitethernet0/2
+failover interface ip FAILOVER 192.168.99.1 255.255.255.0 standby 192.168.99.2
+failover
+
+int g0/0
+nameif outside
+ip add 100.100.100.2 255.255.255.0 
+no shut
+int g0/1
+ip add 192.168.1.2 255.255.255.0
+no shut
+
+## To visualy identify primary | enter once active standby failover is setup##
+prompt hostname state priority
+
+show failover 
